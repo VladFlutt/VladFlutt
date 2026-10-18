@@ -1,0 +1,39 @@
+name: Scan Skills
+
+on:
+  push:
+    paths: [".claude/skills/**", ".github/workflows/scan-skills.yml"]
+  pull_request:
+    paths: [".claude/skills/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install skill-scanner
+        run: pip install "cisco-ai-skill-scanner==2.3.0"
+      - name: Scan
+        run: |
+          set +e
+          skill-scanner scan-all .claude/skills --recursive --use-behavioral --check-overlap \
+            --policy balanced --format markdown --output report.md
+          code=$?
+          skill-scanner scan-all .claude/skills --recursive --use-behavioral \
+            --policy balanced --format json --output report.json
+          cat report.md
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+          echo "scanner exit code: $code"
+          exit $code
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: skill-scan-report
+          path: report.*
