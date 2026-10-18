@@ -21,6 +21,14 @@
 | `remotion-captions` | [remotion-dev/skills/skills/remotion-captions](https://github.com/remotion-dev/skills/tree/1441a11/skills/remotion-captions) | `1441a11` | не указана в репозитории |
 | `ffmpeg` | [digitalsamba/claude-code-video-toolkit/.claude/skills/ffmpeg](https://github.com/digitalsamba/claude-code-video-toolkit/tree/959e0fc/.claude/skills/ffmpeg) | `959e0fc` | MIT (LICENSE скопирован) |
 
+## Отличия от источника
+
+- `deploy-to-vercel`: удалён `Archive.zip`. Это забытая в исходном репозитории устаревшая копия skill с мусором macOS (`__MACOSX`), на неё ничего не ссылается.
+
+## Проверка безопасности
+
+Workflow `.github/workflows/scan-skills.yml` прогоняет [cisco-ai-defense/skill-scanner](https://github.com/cisco-ai-defense/skill-scanner) при каждом изменении skills и кладёт отчёт в ветку `skill-scan-report`.
+
 ## Обновление
 
 Чтобы обновить skill, скачайте свежую версию из источника и замените папку целиком.
