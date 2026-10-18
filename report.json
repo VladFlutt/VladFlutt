@@ -1,0 +1,2921 @@
+{
+  "summary": {
+    "total_skills_scanned": 16,
+    "total_findings": 33,
+    "safe_skills": 15,
+    "findings_by_severity": {
+      "critical": 6,
+      "high": 2,
+      "medium": 8,
+      "low": 7,
+      "info": 10
+    },
+    "timestamp": "2026-10-18T18:06:30.354434+00:00"
+  },
+  "results": [
+    {
+      "skill_name": "ffmpeg",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/ffmpeg",
+      "is_safe": true,
+      "max_severity": "INFO",
+      "findings_count": 1,
+      "findings": [
+        {
+          "id": "MANIFEST_MISSING_LICENSE_c5ae9be793",
+          "rule_id": "MANIFEST_MISSING_LICENSE",
+          "category": "policy_violation",
+          "severity": "INFO",
+          "title": "Skill does not specify a license",
+          "description": "Skill manifest does not include a 'license' field. Specifying a license helps users understand usage terms.",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'license' field to SKILL.md frontmatter (e.g., MIT, Apache-2.0)",
+          "analyzer": "static",
+          "metadata": {
+            "aitech": null,
+            "aitech_name": null,
+            "aisubtech": null,
+            "aisubtech_name": null,
+            "aitech_mappings": [],
+            "aisubtech_mappings": [],
+            "framework_mappings": [],
+            "taxonomy_status": "not_applicable",
+            "taxonomy_source": "rule"
+          }
+        }
+      ],
+      "scan_duration_seconds": 0.1361696720123291,
+      "duration_ms": 136,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:30.626655+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 1,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 1,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 1,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "text-to-speech",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/text-to-speech",
+      "is_safe": true,
+      "max_severity": "MEDIUM",
+      "findings_count": 2,
+      "findings": [
+        {
+          "id": "PIPELINE_TAINT_7d14fbba26",
+          "rule_id": "PIPELINE_TAINT_FLOW",
+          "category": "data_exfiltration",
+          "severity": "LOW",
+          "title": "Dangerous data flow in command pipeline",
+          "description": "Pipeline downloads data from the network and executes it: `curl --proto '=https' --tlsv1.2 -LsSf https://github.com/elevenlabs/cli/releases/latest/download/elevenlabs-cli-installer.sh | sh`. This is a remote code execution pattern. (Note: found in documentation file - may be instructional rather than executable.)",
+          "file_path": "references/installation.md",
+          "line_number": 2,
+          "snippet": "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/elevenlabs/cli/releases/latest/download/elevenlabs-cli-installer.sh | sh",
+          "remediation": "Review the command pipeline. Avoid piping sensitive data to network commands or shell execution.",
+          "analyzer": "pipeline",
+          "metadata": {
+            "pipeline": "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/elevenlabs/cli/releases/latest/download/elevenlabs-cli-installer.sh | sh",
+            "source_taints": [
+              "NETWORK_DATA"
+            ],
+            "sink_command": "sh",
+            "chain_length": 2,
+            "in_documentation": true,
+            "behavior_category": "command_injection",
+            "semantic_facts": {
+              "evidence_kind": "command_pipeline",
+              "evidence_value_class": "untrusted_fetch_execute",
+              "evidence_count": 2,
+              "context_kind": "documentation",
+              "signal_kind": "taint_flow",
+              "commands": [
+                {
+                  "executable": "curl",
+                  "argument_classes": [
+                    "script_path",
+                    "url"
+                  ],
+                  "downloads": true,
+                  "executes": false,
+                  "destructive": false,
+                  "privilege_change": false,
+                  "source_class": "network",
+                  "sink_class": "",
+                  "file_path": "references/installation.md"
+                },
+                {
+                  "executable": "sh",
+                  "argument_classes": [],
+                  "downloads": false,
+                  "executes": true,
+                  "destructive": false,
+                  "privilege_change": false,
+                  "source_class": "",
+                  "sink_class": "execution",
+                  "file_path": "references/installation.md"
+                }
+              ],
+              "urls": [
+                {
+                  "scheme": "https",
+                  "host": "github.com",
+                  "domain_class": "public",
+                  "trusted_installer": false,
+                  "method": "GET",
+                  "direction": "inbound",
+                  "file_path": "references/installation.md"
+                }
+              ],
+              "flows": [
+                {
+                  "source_class": "network",
+                  "sink_class": "execution",
+                  "transforms": [],
+                  "cross_file": false,
+                  "source_path": "references/installation.md",
+                  "sink_path": "references/installation.md"
+                }
+              ],
+              "candidate_command": {
+                "executable": "sh",
+                "argument_classes": [],
+                "downloads": false,
+                "executes": true,
+                "destructive": false,
+                "privilege_change": false,
+                "source_class": "",
+                "sink_class": "execution",
+                "file_path": "references/installation.md"
+              },
+              "candidate_flow": {
+                "source_class": "network",
+                "sink_class": "execution",
+                "transforms": [],
+                "cross_file": false,
+                "source_path": "references/installation.md",
+                "sink_path": "references/installation.md"
+              },
+              "candidate_url": {
+                "scheme": "https",
+                "host": "github.com",
+                "domain_class": "public",
+                "trusted_installer": false,
+                "method": "GET",
+                "direction": "inbound",
+                "file_path": "references/installation.md"
+              }
+            },
+            "aitech": "AITech-8.2",
+            "aitech_name": "Data Exfiltration / Exposure",
+            "aisubtech": "AISubtech-8.2.3",
+            "aisubtech_name": "Data Exfiltration via Agent Tooling",
+            "aitech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0024.000: Exfiltration via AI Inference API: Infer Training Data Membership",
+              "MITRE ATLAS: AML.T0035: AI Artifact Collection",
+              "MITRE ATLAS: AML.T0037: Data From Local System",
+              "MITRE ATLAS: AML.T0057: LLM Data Leakage",
+              "NIST AML: NISTAML.037: Training Data Attacks"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "MDBLOCK_PYTHON_SUBPROCESS_5185c8e855",
+          "rule_id": "MDBLOCK_PYTHON_SUBPROCESS",
+          "category": "command_injection",
+          "severity": "MEDIUM",
+          "title": "Python code block executes shell commands",
+          "description": "Code block in references/streaming.md at line 39 contains potentially dangerous Python code.",
+          "file_path": "references/streaming.md",
+          "line_number": 39,
+          "snippet": "process = subprocess.Popen(",
+          "remediation": "Review the code block for security implications.",
+          "analyzer": "behavioral",
+          "metadata": {
+            "from_code_block": true,
+            "block_language": "python",
+            "aitech": "AITech-9.1",
+            "aitech_name": "Model or Agentic System Manipulation",
+            "aisubtech": "AISubtech-9.1.1",
+            "aisubtech_name": "Code Execution",
+            "aitech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning",
+              "Cisco AI MDL Code: MDL-006",
+              "Cisco AI MDL Code: MDL-007",
+              "Cisco AI MDL Code: MDL-005",
+              "Cisco AI MDL Code: MDL-010",
+              "Cisco AI MDL Code: MDL-012",
+              "Cisco AI MDL Code: MDL-014",
+              "Cisco AI MDL Code: MDL-015",
+              "Cisco AI MDL Code: MDL-019"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        }
+      ],
+      "scan_duration_seconds": 0.10609936714172363,
+      "duration_ms": 106,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:30.749154+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 2,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 2,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 2,
+            "not_applicable": 0,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "eas-app-stores",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/eas-app-stores",
+      "is_safe": true,
+      "max_severity": "SAFE",
+      "findings_count": 0,
+      "findings": [],
+      "scan_duration_seconds": 0.1699514389038086,
+      "duration_ms": 169,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:30.936319+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 0,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 0,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 0,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "expo-native-ui",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/expo-native-ui",
+      "is_safe": true,
+      "max_severity": "SAFE",
+      "findings_count": 0,
+      "findings": [],
+      "scan_duration_seconds": 0.1701350212097168,
+      "duration_ms": 170,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:31.125032+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 0,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 0,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 0,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "expo-router",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/expo-router",
+      "is_safe": true,
+      "max_severity": "SAFE",
+      "findings_count": 0,
+      "findings": [],
+      "scan_duration_seconds": 0.1421048641204834,
+      "duration_ms": 142,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:31.284359+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 0,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 0,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 0,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "supabase",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/supabase",
+      "is_safe": true,
+      "max_severity": "INFO",
+      "findings_count": 1,
+      "findings": [
+        {
+          "id": "MANIFEST_MISSING_LICENSE_c5ae9be793",
+          "rule_id": "MANIFEST_MISSING_LICENSE",
+          "category": "policy_violation",
+          "severity": "INFO",
+          "title": "Skill does not specify a license",
+          "description": "Skill manifest does not include a 'license' field. Specifying a license helps users understand usage terms.",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'license' field to SKILL.md frontmatter (e.g., MIT, Apache-2.0)",
+          "analyzer": "static",
+          "metadata": {
+            "aitech": null,
+            "aitech_name": null,
+            "aisubtech": null,
+            "aisubtech_name": null,
+            "aitech_mappings": [],
+            "aisubtech_mappings": [],
+            "framework_mappings": [],
+            "taxonomy_status": "not_applicable",
+            "taxonomy_source": "rule"
+          }
+        }
+      ],
+      "scan_duration_seconds": 0.09603381156921387,
+      "duration_ms": 96,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:31.396792+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 1,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 1,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 1,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "use-railway",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/use-railway",
+      "is_safe": false,
+      "max_severity": "CRITICAL",
+      "findings_count": 14,
+      "findings": [
+        {
+          "id": "ALLOWED_TOOLS_BASH_VIOLATION_024c1ff06c",
+          "rule_id": "ALLOWED_TOOLS_BASH_VIOLATION",
+          "category": "unauthorized_tool_use",
+          "severity": "HIGH",
+          "title": "Code executes bash but Bash tool not in allowed-tools",
+          "description": "Skill restricts tools to ['Bash(railway:*)', 'Bash(which:*)', 'Bash(command:*)', 'Bash(npm:*)', 'Bash(npx:*)', 'Bash(curl:*)', 'Bash(python3:*)'] but code executes bash commands",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'Bash' to allowed-tools or remove bash execution from code",
+          "analyzer": "static",
+          "metadata": {
+            "semantic_facts": {
+              "evidence_kind": "capability_mismatch",
+              "context_kind": "manifest",
+              "signals": [
+                {
+                  "rule_id": "ALLOWED_TOOLS_BASH_VIOLATION",
+                  "kind": "undeclared_tool",
+                  "file_path": "SKILL.md",
+                  "value_class": "bash"
+                }
+              ],
+              "candidate_command": {
+                "executable": "Bash",
+                "argument_classes": [],
+                "downloads": false,
+                "executes": true,
+                "destructive": false,
+                "privilege_change": false,
+                "source_class": "skill_code",
+                "sink_class": "process_execution",
+                "file_path": ""
+              },
+              "commands": [
+                {
+                  "executable": "Bash",
+                  "argument_classes": [],
+                  "downloads": false,
+                  "executes": true,
+                  "destructive": false,
+                  "privilege_change": false,
+                  "source_class": "skill_code",
+                  "sink_class": "process_execution",
+                  "file_path": ""
+                }
+              ]
+            },
+            "aitech": "AITech-2.1",
+            "aitech_name": "Excessive Agency",
+            "aisubtech": "AISubtech-2.1.2",
+            "aisubtech_name": "Capability and Permission Overreach",
+            "aitech_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "ALLOWED_TOOLS_READ_VIOLATION_1117e10aee",
+          "rule_id": "ALLOWED_TOOLS_READ_VIOLATION",
+          "category": "unauthorized_tool_use",
+          "severity": "MEDIUM",
+          "title": "Code reads files but Read tool not in allowed-tools",
+          "description": "Skill restricts tools to ['Bash(railway:*)', 'Bash(which:*)', 'Bash(command:*)', 'Bash(npm:*)', 'Bash(npx:*)', 'Bash(curl:*)', 'Bash(python3:*)'] but bundled scripts appear to read files from the filesystem.",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'Read' to allowed-tools or remove file reading operations from scripts",
+          "analyzer": "static",
+          "metadata": {
+            "semantic_facts": {
+              "evidence_kind": "capability_mismatch",
+              "context_kind": "manifest",
+              "signals": [
+                {
+                  "rule_id": "ALLOWED_TOOLS_READ_VIOLATION",
+                  "kind": "undeclared_tool",
+                  "file_path": "SKILL.md",
+                  "value_class": "read"
+                }
+              ],
+              "candidate_command": {
+                "executable": "Read",
+                "argument_classes": [],
+                "downloads": false,
+                "executes": false,
+                "destructive": false,
+                "privilege_change": false,
+                "source_class": "skill_code",
+                "sink_class": "filesystem_read",
+                "file_path": ""
+              },
+              "commands": [
+                {
+                  "executable": "Read",
+                  "argument_classes": [],
+                  "downloads": false,
+                  "executes": false,
+                  "destructive": false,
+                  "privilege_change": false,
+                  "source_class": "skill_code",
+                  "sink_class": "filesystem_read",
+                  "file_path": ""
+                }
+              ]
+            },
+            "aitech": "AITech-2.1",
+            "aitech_name": "Excessive Agency",
+            "aisubtech": "AISubtech-2.1.2",
+            "aisubtech_name": "Capability and Permission Overreach",
+            "aitech_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "ALLOWED_TOOLS_GREP_VIOLATION_175410dbd8",
+          "rule_id": "ALLOWED_TOOLS_GREP_VIOLATION",
+          "category": "unauthorized_tool_use",
+          "severity": "LOW",
+          "title": "Code uses search/grep patterns but Grep tool not in allowed-tools",
+          "description": "Skill restricts tools to ['Bash(railway:*)', 'Bash(which:*)', 'Bash(command:*)', 'Bash(npm:*)', 'Bash(npx:*)', 'Bash(curl:*)', 'Bash(python3:*)'] but code uses regex search patterns",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'Grep' to allowed-tools or remove regex search operations",
+          "analyzer": "static",
+          "metadata": {
+            "semantic_facts": {
+              "evidence_kind": "capability_mismatch",
+              "context_kind": "manifest",
+              "signals": [
+                {
+                  "rule_id": "ALLOWED_TOOLS_GREP_VIOLATION",
+                  "kind": "undeclared_tool",
+                  "file_path": "SKILL.md",
+                  "value_class": "grep"
+                }
+              ],
+              "candidate_command": {
+                "executable": "Grep",
+                "argument_classes": [],
+                "downloads": false,
+                "executes": false,
+                "destructive": false,
+                "privilege_change": false,
+                "source_class": "skill_code",
+                "sink_class": "content_search",
+                "file_path": ""
+              },
+              "commands": [
+                {
+                  "executable": "Grep",
+                  "argument_classes": [],
+                  "downloads": false,
+                  "executes": false,
+                  "destructive": false,
+                  "privilege_change": false,
+                  "source_class": "skill_code",
+                  "sink_class": "content_search",
+                  "file_path": ""
+                }
+              ]
+            },
+            "aitech": "AITech-2.1",
+            "aitech_name": "Excessive Agency",
+            "aisubtech": "AISubtech-2.1.2",
+            "aisubtech_name": "Capability and Permission Overreach",
+            "aitech_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "MANIFEST_MISSING_LICENSE_c5ae9be793",
+          "rule_id": "MANIFEST_MISSING_LICENSE",
+          "category": "policy_violation",
+          "severity": "INFO",
+          "title": "Skill does not specify a license",
+          "description": "Skill manifest does not include a 'license' field. Specifying a license helps users understand usage terms.",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'license' field to SKILL.md frontmatter (e.g., MIT, Apache-2.0)",
+          "analyzer": "static",
+          "metadata": {
+            "aitech": null,
+            "aitech_name": null,
+            "aisubtech": null,
+            "aisubtech_name": null,
+            "aitech_mappings": [],
+            "aisubtech_mappings": [],
+            "framework_mappings": [],
+            "taxonomy_status": "not_applicable",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "PIPELINE_TAINT_3c8f394f95",
+          "rule_id": "PIPELINE_TAINT_FLOW",
+          "category": "data_exfiltration",
+          "severity": "LOW",
+          "title": "Dangerous data flow in command pipeline",
+          "description": "Pipeline downloads data from the network and executes it: `curl -fsSL agents.railway.com | sh # Install CLI and configure detected agents`. This is a remote code execution pattern. (Note: appears to be instructional install text in SKILL.md; review URL trust and pinning.)",
+          "file_path": "SKILL.md",
+          "line_number": 1,
+          "snippet": "curl -fsSL agents.railway.com | sh # Install CLI and configure detected agents",
+          "remediation": "Review the command pipeline. Avoid piping sensitive data to network commands or shell execution.",
+          "analyzer": "pipeline",
+          "metadata": {
+            "pipeline": "curl -fsSL agents.railway.com | sh # Install CLI and configure detected agents",
+            "source_taints": [
+              "NETWORK_DATA"
+            ],
+            "sink_command": "sh",
+            "chain_length": 2,
+            "in_documentation": false,
+            "behavior_category": "command_injection",
+            "semantic_facts": {
+              "evidence_kind": "command_pipeline",
+              "evidence_value_class": "untrusted_fetch_execute",
+              "evidence_count": 2,
+              "context_kind": "instruction",
+              "signal_kind": "taint_flow",
+              "commands": [
+                {
+                  "executable": "curl",
+                  "argument_classes": [],
+                  "downloads": true,
+                  "executes": false,
+                  "destructive": false,
+                  "privilege_change": false,
+                  "source_class": "network",
+                  "sink_class": "",
+                  "file_path": "SKILL.md"
+                },
+                {
+                  "executable": "sh",
+                  "argument_classes": [],
+                  "downloads": false,
+                  "executes": true,
+                  "destructive": false,
+                  "privilege_change": false,
+                  "source_class": "",
+                  "sink_class": "execution",
+                  "file_path": "SKILL.md"
+                }
+              ],
+              "urls": [],
+              "flows": [
+                {
+                  "source_class": "network",
+                  "sink_class": "execution",
+                  "transforms": [],
+                  "cross_file": false,
+                  "source_path": "SKILL.md",
+                  "sink_path": "SKILL.md"
+                }
+              ],
+              "candidate_command": {
+                "executable": "sh",
+                "argument_classes": [],
+                "downloads": false,
+                "executes": true,
+                "destructive": false,
+                "privilege_change": false,
+                "source_class": "",
+                "sink_class": "execution",
+                "file_path": "SKILL.md"
+              },
+              "candidate_flow": {
+                "source_class": "network",
+                "sink_class": "execution",
+                "transforms": [],
+                "cross_file": false,
+                "source_path": "SKILL.md",
+                "sink_path": "SKILL.md"
+              }
+            },
+            "aitech": "AITech-8.2",
+            "aitech_name": "Data Exfiltration / Exposure",
+            "aisubtech": "AISubtech-8.2.3",
+            "aisubtech_name": "Data Exfiltration via Agent Tooling",
+            "aitech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0024.000: Exfiltration via AI Inference API: Infer Training Data Membership",
+              "MITRE ATLAS: AML.T0035: AI Artifact Collection",
+              "MITRE ATLAS: AML.T0037: Data From Local System",
+              "MITRE ATLAS: AML.T0057: LLM Data Leakage",
+              "NIST AML: NISTAML.037: Training Data Attacks"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "CORRELATED_NETWORK_EXECUTION_FLOW_826951fcf666",
+          "rule_id": "CORRELATED_NETWORK_EXECUTION_FLOW",
+          "category": "command_injection",
+          "severity": "HIGH",
+          "title": "Network-derived content reaches code execution",
+          "description": "Correlated network \u2192 code_execution behavior across SKILL.md.",
+          "file_path": "SKILL.md",
+          "line_number": 141,
+          "snippet": null,
+          "remediation": "Verify downloaded content cryptographically and never pass network data to a dynamic interpreter.",
+          "analyzer": "correlation",
+          "metadata": {
+            "files_involved": [
+              "SKILL.md"
+            ],
+            "semantic_facts": {
+              "evidence_kind": "fenced_code_flow",
+              "context_kind": "code",
+              "commands": [
+                {
+                  "executable": "curl",
+                  "argument_classes": [
+                    "request_method",
+                    "destination_dynamic"
+                  ],
+                  "downloads": true,
+                  "executes": false,
+                  "destructive": false,
+                  "privilege_change": false,
+                  "source_class": "network",
+                  "sink_class": "network",
+                  "file_path": "SKILL.md"
+                },
+                {
+                  "executable": "curl",
+                  "argument_classes": [
+                    "request_method",
+                    "destination_external"
+                  ],
+                  "downloads": true,
+                  "executes": false,
+                  "destructive": false,
+                  "privilege_change": false,
+                  "source_class": "network",
+                  "sink_class": "network",
+                  "file_path": "SKILL.md"
+                },
+                {
+                  "executable": "sh",
+                  "argument_classes": [
+                    "literal"
+                  ],
+                  "downloads": false,
+                  "executes": true,
+                  "destructive": false,
+                  "privilege_change": false,
+                  "source_class": "",
+                  "sink_class": "code_execution",
+                  "file_path": "SKILL.md"
+                },
+                {
+                  "executable": "bash",
+                  "argument_classes": [
+                    "literal"
+                  ],
+                  "downloads": false,
+                  "executes": true,
+                  "destructive": false,
+                  "privilege_change": false,
+                  "source_class": "",
+                  "sink_class": "code_execution",
+                  "file_path": "SKILL.md"
+                }
+              ],
+              "urls": [
+                {
+                  "url": "https://railway.com/install.sh",
+                  "scheme": "https",
+                  "host": "railway.com",
+                  "domain_class": "external",
+                  "trusted_installer": false,
+                  "method": "get",
+                  "direction": "inbound",
+                  "file_path": "SKILL.md"
+                }
+              ],
+              "flows": [
+                {
+                  "source_class": "network",
+                  "sink_class": "code_execution",
+                  "transforms": [],
+                  "cross_file": false,
+                  "source_path": "SKILL.md",
+                  "sink_path": "SKILL.md"
+                }
+              ],
+              "reference_edges": [],
+              "signals": [
+                {
+                  "rule_id": "CORRELATION_SIGNAL",
+                  "kind": "correlated_behavior",
+                  "file_path": "SKILL.md",
+                  "value_class": "network"
+                },
+                {
+                  "rule_id": "CORRELATION_SIGNAL",
+                  "kind": "fenced_code_language",
+                  "file_path": "SKILL.md",
+                  "value_class": "bash"
+                }
+              ],
+              "candidate_flow": {
+                "source_class": "network",
+                "sink_class": "code_execution",
+                "transforms": [],
+                "cross_file": false,
+                "source_path": "SKILL.md",
+                "sink_path": "SKILL.md"
+              }
+            },
+            "aitech": "AITech-9.1",
+            "aitech_name": "Model or Agentic System Manipulation",
+            "aisubtech": "AISubtech-9.1.1",
+            "aisubtech_name": "Code Execution",
+            "aitech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning",
+              "Cisco AI MDL Code: MDL-006",
+              "Cisco AI MDL Code: MDL-007",
+              "Cisco AI MDL Code: MDL-005",
+              "Cisco AI MDL Code: MDL-010",
+              "Cisco AI MDL Code: MDL-012",
+              "Cisco AI MDL Code: MDL-014",
+              "Cisco AI MDL Code: MDL-015",
+              "Cisco AI MDL Code: MDL-019"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "YARA_prompt_injection_generic_11272613e4",
+          "rule_id": "YARA_prompt_injection_generic",
+          "category": "prompt_injection",
+          "severity": "CRITICAL",
+          "title": "PROMPT INJECTION detected by YARA",
+          "description": "Generic prompt injection patterns: do not tell the user",
+          "file_path": "references/analyze-db-mongo.md",
+          "line_number": 80,
+          "snippet": "- If cache usage is consistently >80%, this indicates working set pressure \u2014 note it but do not tell the user to increase RAM manually.",
+          "remediation": "Review and remove prompt injection pattern",
+          "analyzer": "static",
+          "metadata": {
+            "yara_rule": "prompt_injection_generic",
+            "yara_namespace": "prompt_injection_generic",
+            "matched_string": "$hidden_behavior",
+            "threat_type": "PROMPT INJECTION",
+            "semantic_facts": {},
+            "deduped_rule_ids": [
+              "PROMPT_INJECTION_CONCEALMENT"
+            ],
+            "deduped_count": 1,
+            "aitech": "AITech-1.1",
+            "aitech_name": "Direct Prompt Injection and Jailbreak (Prompt-based Manipulation)",
+            "aisubtech": "AISubtech-1.1.1",
+            "aisubtech_name": "Instruction Manipulation",
+            "aitech_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: ASI01: Agent Goal Hijack",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0054: LLM Jailbreak",
+              "MITRE ATLAS: AML.T0093: Prompt Infiltration via Public-Facing Application",
+              "NIST AML: NISTAML.018: Prompt Injection"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: ASI01: Agent Goal Hijack",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0054: LLM Jailbreak",
+              "MITRE ATLAS: AML.T0093: Prompt Infiltration via Public-Facing Application",
+              "NIST AML: NISTAML.018: Prompt Injection"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: ASI01: Agent Goal Hijack",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0054: LLM Jailbreak",
+              "MITRE ATLAS: AML.T0093: Prompt Infiltration via Public-Facing Application",
+              "NIST AML: NISTAML.018: Prompt Injection"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "YARA_prompt_injection_generic_1e0d763fd7",
+          "rule_id": "YARA_prompt_injection_generic",
+          "category": "prompt_injection",
+          "severity": "CRITICAL",
+          "title": "PROMPT INJECTION detected by YARA",
+          "description": "Generic prompt injection patterns: do NOT tell the user",
+          "file_path": "references/analyze-db-postgres.md",
+          "line_number": 226,
+          "snippet": "- If the working set far exceeds what 25% of current RAM can hold, note this as a limitation of the current memory footprint \u2014 but do NOT tell the user to increase RAM. The platform handles that automatically.",
+          "remediation": "Review and remove prompt injection pattern",
+          "analyzer": "static",
+          "metadata": {
+            "yara_rule": "prompt_injection_generic",
+            "yara_namespace": "prompt_injection_generic",
+            "matched_string": "$hidden_behavior",
+            "threat_type": "PROMPT INJECTION",
+            "semantic_facts": {},
+            "deduped_rule_ids": [
+              "PROMPT_INJECTION_CONCEALMENT"
+            ],
+            "deduped_count": 1,
+            "aitech": "AITech-1.1",
+            "aitech_name": "Direct Prompt Injection and Jailbreak (Prompt-based Manipulation)",
+            "aisubtech": "AISubtech-1.1.1",
+            "aisubtech_name": "Instruction Manipulation",
+            "aitech_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: ASI01: Agent Goal Hijack",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0054: LLM Jailbreak",
+              "MITRE ATLAS: AML.T0093: Prompt Infiltration via Public-Facing Application",
+              "NIST AML: NISTAML.018: Prompt Injection"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: ASI01: Agent Goal Hijack",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0054: LLM Jailbreak",
+              "MITRE ATLAS: AML.T0093: Prompt Infiltration via Public-Facing Application",
+              "NIST AML: NISTAML.018: Prompt Injection"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: ASI01: Agent Goal Hijack",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0054: LLM Jailbreak",
+              "MITRE ATLAS: AML.T0093: Prompt Infiltration via Public-Facing Application",
+              "NIST AML: NISTAML.018: Prompt Injection"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "SQL_INJECTION_STRING_FORMAT_af05605167",
+          "rule_id": "SQL_INJECTION_STRING_FORMAT",
+          "category": "command_injection",
+          "severity": "CRITICAL",
+          "title": "SQL query with f-string variables (SQL injection risk)",
+          "description": "Pattern detected: f\"SELECT pid, state, query FROM pg_stat_activity WHERE pid = {q.get('blocking_pid')}",
+          "file_path": "scripts/analyze-postgres.py",
+          "line_number": 2109,
+          "snippet": "f\"SELECT pid, state, query FROM pg_stat_activity WHERE pid = {q.get('blocking_pid')};\",",
+          "remediation": "Use parameterized queries with ? or %s placeholders",
+          "analyzer": "static",
+          "metadata": {
+            "matched_pattern": "f[\"']SELECT.*WHERE.*\\{[^}]+\\}",
+            "matched_text": "f\"SELECT pid, state, query FROM pg_stat_activity WHERE pid = {q.get('blocking_pid')}",
+            "signature_pattern_index": 0,
+            "signature_match_start": 0,
+            "signature_match_end": 84,
+            "signature_pattern_sha256": "9e0f479b90b908361f3903088857c26e9105eddeca830429ed3796c1ff010d75",
+            "scanner_category": "INJECTION ATTACK",
+            "signature_context": "code",
+            "signature_polarity": "active",
+            "source_category": "command_injection",
+            "category_normalization": "native",
+            "semantic_facts": {
+              "evidence_kind": "signature_pattern",
+              "context_kind": "code",
+              "signals": [
+                {
+                  "rule_id": "SQL_INJECTION_STRING_FORMAT",
+                  "kind": "signature_polarity",
+                  "file_path": "scripts/analyze-postgres.py",
+                  "value_class": "active"
+                },
+                {
+                  "rule_id": "SQL_INJECTION_STRING_FORMAT",
+                  "kind": "unreferenced_executable",
+                  "file_path": "scripts/analyze-postgres.py",
+                  "value_class": "python"
+                }
+              ]
+            },
+            "aitech": "AITech-9.1",
+            "aitech_name": "Model or Agentic System Manipulation",
+            "aisubtech": "AISubtech-9.1.4",
+            "aisubtech_name": "Injection Attacks (e.g., SQL, Command Execution, XSS)",
+            "aitech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning",
+              "Cisco AI MDL Code: MDL-006",
+              "Cisco AI MDL Code: MDL-007",
+              "Cisco AI MDL Code: MDL-005",
+              "Cisco AI MDL Code: MDL-010",
+              "Cisco AI MDL Code: MDL-012",
+              "Cisco AI MDL Code: MDL-014",
+              "Cisco AI MDL Code: MDL-015",
+              "Cisco AI MDL Code: MDL-019"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: LLM10:2026: Improper Output Handling",
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "MITRE ATLAS: AML.T0067: LLM Trusted Output Component Manipulation",
+              "MITRE ATT&CK: T1588.007: Obtain AI Capabilities",
+              "NIST AML: NISTAML.024: Targeted Poisoning"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: LLM10:2026: Improper Output Handling",
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "MITRE ATLAS: AML.T0067: LLM Trusted Output Component Manipulation",
+              "MITRE ATT&CK: T1588.007: Obtain AI Capabilities",
+              "NIST AML: NISTAML.024: Targeted Poisoning"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "SQL_INJECTION_STRING_FORMAT_678a74de63",
+          "rule_id": "SQL_INJECTION_STRING_FORMAT",
+          "category": "command_injection",
+          "severity": "CRITICAL",
+          "title": "SQL query with f-string variables (SQL injection risk)",
+          "description": "Pattern detected: f\"SELECT extversion FROM pg_extension WHERE extname = '{extension}",
+          "file_path": "scripts/pg-extensions.py",
+          "line_number": 163,
+          "snippet": "query = f\"SELECT extversion FROM pg_extension WHERE extname = '{extension}'\"",
+          "remediation": "Use parameterized queries with ? or %s placeholders",
+          "analyzer": "static",
+          "metadata": {
+            "matched_pattern": "f[\"']SELECT.*WHERE.*\\{[^}]+\\}",
+            "matched_text": "f\"SELECT extversion FROM pg_extension WHERE extname = '{extension}",
+            "signature_pattern_index": 0,
+            "signature_match_start": 8,
+            "signature_match_end": 74,
+            "signature_pattern_sha256": "9e0f479b90b908361f3903088857c26e9105eddeca830429ed3796c1ff010d75",
+            "scanner_category": "INJECTION ATTACK",
+            "signature_context": "code",
+            "signature_polarity": "active",
+            "source_category": "command_injection",
+            "category_normalization": "native",
+            "semantic_facts": {
+              "evidence_kind": "signature_pattern",
+              "context_kind": "code",
+              "signals": [
+                {
+                  "rule_id": "SQL_INJECTION_STRING_FORMAT",
+                  "kind": "signature_polarity",
+                  "file_path": "scripts/pg-extensions.py",
+                  "value_class": "active"
+                }
+              ]
+            },
+            "aitech": "AITech-9.1",
+            "aitech_name": "Model or Agentic System Manipulation",
+            "aisubtech": "AISubtech-9.1.4",
+            "aisubtech_name": "Injection Attacks (e.g., SQL, Command Execution, XSS)",
+            "aitech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning",
+              "Cisco AI MDL Code: MDL-006",
+              "Cisco AI MDL Code: MDL-007",
+              "Cisco AI MDL Code: MDL-005",
+              "Cisco AI MDL Code: MDL-010",
+              "Cisco AI MDL Code: MDL-012",
+              "Cisco AI MDL Code: MDL-014",
+              "Cisco AI MDL Code: MDL-015",
+              "Cisco AI MDL Code: MDL-019"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: LLM10:2026: Improper Output Handling",
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "MITRE ATLAS: AML.T0067: LLM Trusted Output Component Manipulation",
+              "MITRE ATT&CK: T1588.007: Obtain AI Capabilities",
+              "NIST AML: NISTAML.024: Targeted Poisoning"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: LLM10:2026: Improper Output Handling",
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "MITRE ATLAS: AML.T0067: LLM Trusted Output Component Manipulation",
+              "MITRE ATT&CK: T1588.007: Obtain AI Capabilities",
+              "NIST AML: NISTAML.024: Targeted Poisoning"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "SQL_INJECTION_STRING_FORMAT_013535729d",
+          "rule_id": "SQL_INJECTION_STRING_FORMAT",
+          "category": "command_injection",
+          "severity": "CRITICAL",
+          "title": "SQL query with f-string variables (SQL injection risk)",
+          "description": "Pattern detected: f\"SELECT 1 FROM pg_available_extensions WHERE name = '{extension}",
+          "file_path": "scripts/pg-extensions.py",
+          "line_number": 172,
+          "snippet": "query = f\"SELECT 1 FROM pg_available_extensions WHERE name = '{extension}'\"",
+          "remediation": "Use parameterized queries with ? or %s placeholders",
+          "analyzer": "static",
+          "metadata": {
+            "matched_pattern": "f[\"']SELECT.*WHERE.*\\{[^}]+\\}",
+            "matched_text": "f\"SELECT 1 FROM pg_available_extensions WHERE name = '{extension}",
+            "signature_pattern_index": 0,
+            "signature_match_start": 8,
+            "signature_match_end": 73,
+            "signature_pattern_sha256": "9e0f479b90b908361f3903088857c26e9105eddeca830429ed3796c1ff010d75",
+            "scanner_category": "INJECTION ATTACK",
+            "signature_context": "code",
+            "signature_polarity": "active",
+            "source_category": "command_injection",
+            "category_normalization": "native",
+            "semantic_facts": {
+              "evidence_kind": "signature_pattern",
+              "context_kind": "code",
+              "signals": [
+                {
+                  "rule_id": "SQL_INJECTION_STRING_FORMAT",
+                  "kind": "signature_polarity",
+                  "file_path": "scripts/pg-extensions.py",
+                  "value_class": "active"
+                }
+              ]
+            },
+            "aitech": "AITech-9.1",
+            "aitech_name": "Model or Agentic System Manipulation",
+            "aisubtech": "AISubtech-9.1.4",
+            "aisubtech_name": "Injection Attacks (e.g., SQL, Command Execution, XSS)",
+            "aitech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning",
+              "Cisco AI MDL Code: MDL-006",
+              "Cisco AI MDL Code: MDL-007",
+              "Cisco AI MDL Code: MDL-005",
+              "Cisco AI MDL Code: MDL-010",
+              "Cisco AI MDL Code: MDL-012",
+              "Cisco AI MDL Code: MDL-014",
+              "Cisco AI MDL Code: MDL-015",
+              "Cisco AI MDL Code: MDL-019"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: LLM10:2026: Improper Output Handling",
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "MITRE ATLAS: AML.T0067: LLM Trusted Output Component Manipulation",
+              "MITRE ATT&CK: T1588.007: Obtain AI Capabilities",
+              "NIST AML: NISTAML.024: Targeted Poisoning"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: LLM10:2026: Improper Output Handling",
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "MITRE ATLAS: AML.T0067: LLM Trusted Output Component Manipulation",
+              "MITRE ATT&CK: T1588.007: Obtain AI Capabilities",
+              "NIST AML: NISTAML.024: Targeted Poisoning"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "SQL_INJECTION_STRING_FORMAT_7b2e6e306a",
+          "rule_id": "SQL_INJECTION_STRING_FORMAT",
+          "category": "command_injection",
+          "severity": "CRITICAL",
+          "title": "SQL query with f-string variables (SQL injection risk)",
+          "description": "Pattern detected: f\"SELECT name, default_version, comment FROM pg_available_extensions WHERE name = '{extension}",
+          "file_path": "scripts/pg-extensions.py",
+          "line_number": 267,
+          "snippet": "query = f\"SELECT name, default_version, comment FROM pg_available_extensions WHERE name = '{extension}'\"",
+          "remediation": "Use parameterized queries with ? or %s placeholders",
+          "analyzer": "static",
+          "metadata": {
+            "matched_pattern": "f[\"']SELECT.*WHERE.*\\{[^}]+\\}",
+            "matched_text": "f\"SELECT name, default_version, comment FROM pg_available_extensions WHERE name = '{extension}",
+            "signature_pattern_index": 0,
+            "signature_match_start": 8,
+            "signature_match_end": 102,
+            "signature_pattern_sha256": "9e0f479b90b908361f3903088857c26e9105eddeca830429ed3796c1ff010d75",
+            "scanner_category": "INJECTION ATTACK",
+            "signature_context": "code",
+            "signature_polarity": "active",
+            "source_category": "command_injection",
+            "category_normalization": "native",
+            "semantic_facts": {
+              "evidence_kind": "signature_pattern",
+              "context_kind": "code",
+              "signals": [
+                {
+                  "rule_id": "SQL_INJECTION_STRING_FORMAT",
+                  "kind": "signature_polarity",
+                  "file_path": "scripts/pg-extensions.py",
+                  "value_class": "active"
+                }
+              ]
+            },
+            "aitech": "AITech-9.1",
+            "aitech_name": "Model or Agentic System Manipulation",
+            "aisubtech": "AISubtech-9.1.4",
+            "aisubtech_name": "Injection Attacks (e.g., SQL, Command Execution, XSS)",
+            "aitech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning",
+              "Cisco AI MDL Code: MDL-006",
+              "Cisco AI MDL Code: MDL-007",
+              "Cisco AI MDL Code: MDL-005",
+              "Cisco AI MDL Code: MDL-010",
+              "Cisco AI MDL Code: MDL-012",
+              "Cisco AI MDL Code: MDL-014",
+              "Cisco AI MDL Code: MDL-015",
+              "Cisco AI MDL Code: MDL-019"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: LLM10:2026: Improper Output Handling",
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "MITRE ATLAS: AML.T0067: LLM Trusted Output Component Manipulation",
+              "MITRE ATT&CK: T1588.007: Obtain AI Capabilities",
+              "NIST AML: NISTAML.024: Targeted Poisoning"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM01:2026: Prompt Injection",
+              "OWASP: LLM10:2026: Improper Output Handling",
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "MITRE ATLAS: AML.T0067: LLM Trusted Output Component Manipulation",
+              "MITRE ATT&CK: T1588.007: Obtain AI Capabilities",
+              "NIST AML: NISTAML.024: Targeted Poisoning"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "CORRELATED_MANIFEST_CAPABILITY_MISMATCH_864c912cea96",
+          "rule_id": "CORRELATED_MANIFEST_CAPABILITY_MISMATCH",
+          "category": "unauthorized_tool_use",
+          "severity": "MEDIUM",
+          "title": "Implementation exceeds declared skill capabilities",
+          "description": "Observed capabilities are absent from allowed-tools: sensitive_file_read.",
+          "file_path": "scripts/railway-api.sh",
+          "line_number": 27,
+          "snippet": null,
+          "remediation": "Declare the required tools/capabilities or remove the undeclared behavior.",
+          "analyzer": "correlation",
+          "metadata": {
+            "missing_capabilities": [
+              "sensitive_file_read"
+            ],
+            "semantic_facts": {
+              "evidence_kind": "correlated_behavior",
+              "context_kind": "code",
+              "commands": [],
+              "urls": [],
+              "flows": [],
+              "reference_edges": [],
+              "signals": [
+                {
+                  "rule_id": "CORRELATION_SIGNAL",
+                  "kind": "manifest_capability_mismatch",
+                  "file_path": "scripts/railway-api.sh",
+                  "value_class": "sensitive_source"
+                },
+                {
+                  "rule_id": "CORRELATED_MANIFEST_CAPABILITY_MISMATCH",
+                  "kind": "undeclared_capability",
+                  "file_path": "scripts/railway-api.sh",
+                  "value_class": "sensitive_file_read"
+                }
+              ]
+            },
+            "aitech": "AITech-2.1",
+            "aitech_name": "Excessive Agency",
+            "aisubtech": "AISubtech-2.1.2",
+            "aisubtech_name": "Capability and Permission Overreach",
+            "aitech_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM03:2026: Excessive Agency",
+              "OWASP: ASI10: Rogue Agents",
+              "MITRE ATLAS: N/A",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "BASH_TAINT_1311289b84",
+          "rule_id": "BEHAVIOR_BASH_TAINT_FLOW",
+          "category": "data_exfiltration",
+          "severity": "MEDIUM",
+          "title": "Bash: tainted data flows to dangerous sink",
+          "description": "Variable $PAYLOAD (line 41) flows to `curl` at line 54.",
+          "file_path": "scripts/railway-api.sh",
+          "line_number": 54,
+          "snippet": "printf '%s' \"$PAYLOAD\" | curl -s https://backboard.railway.com/graphql/v2 \\",
+          "remediation": "Review the data flow from source to sink. Avoid sending sensitive or untrusted data to network or execution commands.",
+          "analyzer": "behavioral",
+          "metadata": {
+            "source_var": "PAYLOAD",
+            "source_line": 41,
+            "sink_command": "curl",
+            "taints": [
+              "COMMAND_OUTPUT"
+            ],
+            "behavior_category": "command_injection",
+            "aitech": "AITech-8.2",
+            "aitech_name": "Data Exfiltration / Exposure",
+            "aisubtech": "AISubtech-8.2.3",
+            "aisubtech_name": "Data Exfiltration via Agent Tooling",
+            "aitech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0024.000: Exfiltration via AI Inference API: Infer Training Data Membership",
+              "MITRE ATLAS: AML.T0035: AI Artifact Collection",
+              "MITRE ATLAS: AML.T0037: Data From Local System",
+              "MITRE ATLAS: AML.T0057: LLM Data Leakage",
+              "NIST AML: NISTAML.037: Training Data Attacks"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        }
+      ],
+      "scan_duration_seconds": 4.949109315872192,
+      "duration_ms": 4949,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:36.381657+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 16,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 8,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 13,
+            "not_applicable": 1,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "web-design-guidelines",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/web-design-guidelines",
+      "is_safe": true,
+      "max_severity": "INFO",
+      "findings_count": 1,
+      "findings": [
+        {
+          "id": "MANIFEST_MISSING_LICENSE_c5ae9be793",
+          "rule_id": "MANIFEST_MISSING_LICENSE",
+          "category": "policy_violation",
+          "severity": "INFO",
+          "title": "Skill does not specify a license",
+          "description": "Skill manifest does not include a 'license' field. Specifying a license helps users understand usage terms.",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'license' field to SKILL.md frontmatter (e.g., MIT, Apache-2.0)",
+          "analyzer": "static",
+          "metadata": {
+            "aitech": null,
+            "aitech_name": null,
+            "aisubtech": null,
+            "aisubtech_name": null,
+            "aitech_mappings": [],
+            "aisubtech_mappings": [],
+            "framework_mappings": [],
+            "taxonomy_status": "not_applicable",
+            "taxonomy_source": "rule"
+          }
+        }
+      ],
+      "scan_duration_seconds": 0.01694345474243164,
+      "duration_ms": 16,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:36.400217+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 1,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 1,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 1,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "remotion-captions",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/remotion-captions",
+      "is_safe": true,
+      "max_severity": "INFO",
+      "findings_count": 1,
+      "findings": [
+        {
+          "id": "MANIFEST_MISSING_LICENSE_c5ae9be793",
+          "rule_id": "MANIFEST_MISSING_LICENSE",
+          "category": "policy_violation",
+          "severity": "INFO",
+          "title": "Skill does not specify a license",
+          "description": "Skill manifest does not include a 'license' field. Specifying a license helps users understand usage terms.",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'license' field to SKILL.md frontmatter (e.g., MIT, Apache-2.0)",
+          "analyzer": "static",
+          "metadata": {
+            "aitech": null,
+            "aitech_name": null,
+            "aisubtech": null,
+            "aisubtech_name": null,
+            "aitech_mappings": [],
+            "aisubtech_mappings": [],
+            "framework_mappings": [],
+            "taxonomy_status": "not_applicable",
+            "taxonomy_source": "rule"
+          }
+        }
+      ],
+      "scan_duration_seconds": 0.08779597282409668,
+      "duration_ms": 87,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:36.491948+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 1,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 1,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 1,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "frontend-design",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/frontend-design",
+      "is_safe": true,
+      "max_severity": "SAFE",
+      "findings_count": 0,
+      "findings": [],
+      "scan_duration_seconds": 0.0475771427154541,
+      "duration_ms": 47,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:36.543063+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 0,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 0,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 0,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "systematic-debugging",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/systematic-debugging",
+      "is_safe": true,
+      "max_severity": "INFO",
+      "findings_count": 1,
+      "findings": [
+        {
+          "id": "MANIFEST_MISSING_LICENSE_c5ae9be793",
+          "rule_id": "MANIFEST_MISSING_LICENSE",
+          "category": "policy_violation",
+          "severity": "INFO",
+          "title": "Skill does not specify a license",
+          "description": "Skill manifest does not include a 'license' field. Specifying a license helps users understand usage terms.",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'license' field to SKILL.md frontmatter (e.g., MIT, Apache-2.0)",
+          "analyzer": "static",
+          "metadata": {
+            "aitech": null,
+            "aitech_name": null,
+            "aisubtech": null,
+            "aisubtech_name": null,
+            "aitech_mappings": [],
+            "aisubtech_mappings": [],
+            "framework_mappings": [],
+            "taxonomy_status": "not_applicable",
+            "taxonomy_source": "rule"
+          }
+        }
+      ],
+      "scan_duration_seconds": 0.18345212936401367,
+      "duration_ms": 183,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:36.744811+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 1,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 1,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 1,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "copywriting",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/copywriting",
+      "is_safe": true,
+      "max_severity": "INFO",
+      "findings_count": 1,
+      "findings": [
+        {
+          "id": "MANIFEST_MISSING_LICENSE_c5ae9be793",
+          "rule_id": "MANIFEST_MISSING_LICENSE",
+          "category": "policy_violation",
+          "severity": "INFO",
+          "title": "Skill does not specify a license",
+          "description": "Skill manifest does not include a 'license' field. Specifying a license helps users understand usage terms.",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'license' field to SKILL.md frontmatter (e.g., MIT, Apache-2.0)",
+          "analyzer": "static",
+          "metadata": {
+            "aitech": null,
+            "aitech_name": null,
+            "aisubtech": null,
+            "aisubtech_name": null,
+            "aitech_mappings": [],
+            "aisubtech_mappings": [],
+            "framework_mappings": [],
+            "taxonomy_status": "not_applicable",
+            "taxonomy_source": "rule"
+          }
+        }
+      ],
+      "scan_duration_seconds": 0.14302849769592285,
+      "duration_ms": 143,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:36.905004+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 1,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 1,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 1,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "deploy-to-vercel",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/deploy-to-vercel",
+      "is_safe": true,
+      "max_severity": "MEDIUM",
+      "findings_count": 6,
+      "findings": [
+        {
+          "id": "MANIFEST_MISSING_LICENSE_c5ae9be793",
+          "rule_id": "MANIFEST_MISSING_LICENSE",
+          "category": "policy_violation",
+          "severity": "INFO",
+          "title": "Skill does not specify a license",
+          "description": "Skill manifest does not include a 'license' field. Specifying a license helps users understand usage terms.",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'license' field to SKILL.md frontmatter (e.g., MIT, Apache-2.0)",
+          "analyzer": "static",
+          "metadata": {
+            "aitech": null,
+            "aitech_name": null,
+            "aisubtech": null,
+            "aisubtech_name": null,
+            "aitech_mappings": [],
+            "aisubtech_mappings": [],
+            "framework_mappings": [],
+            "taxonomy_status": "not_applicable",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "UNDECLARED_NETWORK_DESTINATION_c684f93d37",
+          "rule_id": "UNDECLARED_NETWORK_DESTINATION",
+          "category": "unauthorized_tool_use",
+          "severity": "LOW",
+          "title": "Script contacts a destination the documentation never mentions",
+          "description": "Script contacts or configures 'codex-deploy-skills.vercel.sh' but the skill documentation never visibly mentions it. Undocumented network destinations can indicate behaviour the manifest and description do not disclose.",
+          "file_path": "resources/deploy-codex.sh",
+          "line_number": 9,
+          "snippet": null,
+          "remediation": "Document the destination in SKILL.md (or the manifest description) if it is intended, or remove the undisclosed network access. Organizations can list internal hosts in llm_analysis.trusted_reference_domains.",
+          "analyzer": "static",
+          "metadata": {
+            "aitech": "AITech-9.1",
+            "aitech_name": "Model or Agentic System Manipulation",
+            "aisubtech": "AISubtech-9.1.3",
+            "aisubtech_name": "Unauthorized or Unsolicited Network Access",
+            "aitech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning",
+              "Cisco AI MDL Code: MDL-006",
+              "Cisco AI MDL Code: MDL-007",
+              "Cisco AI MDL Code: MDL-005",
+              "Cisco AI MDL Code: MDL-010",
+              "Cisco AI MDL Code: MDL-012",
+              "Cisco AI MDL Code: MDL-014",
+              "Cisco AI MDL Code: MDL-015",
+              "Cisco AI MDL Code: MDL-019"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0049: Exploit Public Facing Application",
+              "NIST AML: AML.T0072: Reverse Shell",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0049: Exploit Public Facing Application",
+              "NIST AML: AML.T0072: Reverse Shell",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "BASH_TAINT_73b0781614",
+          "rule_id": "BEHAVIOR_BASH_TAINT_FLOW",
+          "category": "data_exfiltration",
+          "severity": "MEDIUM",
+          "title": "Bash: tainted data flows to dangerous sink",
+          "description": "Variable $TARBALL (line 169) flows to `curl` at line 239.",
+          "file_path": "resources/deploy-codex.sh",
+          "line_number": 239,
+          "snippet": "RESPONSE=$(curl -s -X POST \"$DEPLOY_ENDPOINT\" -F \"file=@$TARBALL\" -F \"framework=$FRAMEWORK\")",
+          "remediation": "Review the data flow from source to sink. Avoid sending sensitive or untrusted data to network or execution commands.",
+          "analyzer": "behavioral",
+          "metadata": {
+            "source_var": "TARBALL",
+            "source_line": 169,
+            "sink_command": "curl",
+            "taints": [
+              "COMMAND_OUTPUT"
+            ],
+            "behavior_category": "command_injection",
+            "aitech": "AITech-8.2",
+            "aitech_name": "Data Exfiltration / Exposure",
+            "aisubtech": "AISubtech-8.2.3",
+            "aisubtech_name": "Data Exfiltration via Agent Tooling",
+            "aitech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0024.000: Exfiltration via AI Inference API: Infer Training Data Membership",
+              "MITRE ATLAS: AML.T0035: AI Artifact Collection",
+              "MITRE ATLAS: AML.T0037: Data From Local System",
+              "MITRE ATLAS: AML.T0057: LLM Data Leakage",
+              "NIST AML: NISTAML.037: Training Data Attacks"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "BASH_TAINT_9a5c0f7058",
+          "rule_id": "BEHAVIOR_BASH_TAINT_FLOW",
+          "category": "data_exfiltration",
+          "severity": "MEDIUM",
+          "title": "Bash: network input flows to execution",
+          "description": "Variable $PREVIEW_URL (from network at line 249: `PREVIEW_URL=$(echo \"$RESPONSE\" | grep -o '\"previewUrl\":\"[^\"]*\"' | cut -d'\"' -f4)`) flows to execution sink `curl` at line 266. Executing network-sourced data is a remote code execution vector.",
+          "file_path": "resources/deploy-codex.sh",
+          "line_number": 266,
+          "snippet": "HTTP_STATUS=$(curl -s -o /dev/null -w \"%{http_code}\" \"$PREVIEW_URL\")",
+          "remediation": "Review the data flow from source to sink. Avoid sending sensitive or untrusted data to network or execution commands.",
+          "analyzer": "behavioral",
+          "metadata": {
+            "source_var": "PREVIEW_URL",
+            "source_line": 249,
+            "sink_command": "curl",
+            "taints": [
+              "COMMAND_OUTPUT",
+              "NETWORK_INPUT"
+            ],
+            "behavior_category": "command_injection",
+            "aitech": "AITech-8.2",
+            "aitech_name": "Data Exfiltration / Exposure",
+            "aisubtech": "AISubtech-8.2.3",
+            "aisubtech_name": "Data Exfiltration via Agent Tooling",
+            "aitech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0024.000: Exfiltration via AI Inference API: Infer Training Data Membership",
+              "MITRE ATLAS: AML.T0035: AI Artifact Collection",
+              "MITRE ATLAS: AML.T0037: Data From Local System",
+              "MITRE ATLAS: AML.T0057: LLM Data Leakage",
+              "NIST AML: NISTAML.037: Training Data Attacks"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "BASH_TAINT_82a78e8fb4",
+          "rule_id": "BEHAVIOR_BASH_TAINT_FLOW",
+          "category": "data_exfiltration",
+          "severity": "MEDIUM",
+          "title": "Bash: tainted data flows to dangerous sink",
+          "description": "Variable $TARBALL (line 169) flows to `curl` at line 239.",
+          "file_path": "resources/deploy.sh",
+          "line_number": 239,
+          "snippet": "RESPONSE=$(curl -s -X POST \"$DEPLOY_ENDPOINT\" -F \"file=@$TARBALL\" -F \"framework=$FRAMEWORK\")",
+          "remediation": "Review the data flow from source to sink. Avoid sending sensitive or untrusted data to network or execution commands.",
+          "analyzer": "behavioral",
+          "metadata": {
+            "source_var": "TARBALL",
+            "source_line": 169,
+            "sink_command": "curl",
+            "taints": [
+              "COMMAND_OUTPUT"
+            ],
+            "behavior_category": "command_injection",
+            "aitech": "AITech-8.2",
+            "aitech_name": "Data Exfiltration / Exposure",
+            "aisubtech": "AISubtech-8.2.3",
+            "aisubtech_name": "Data Exfiltration via Agent Tooling",
+            "aitech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0024.000: Exfiltration via AI Inference API: Infer Training Data Membership",
+              "MITRE ATLAS: AML.T0035: AI Artifact Collection",
+              "MITRE ATLAS: AML.T0037: Data From Local System",
+              "MITRE ATLAS: AML.T0057: LLM Data Leakage",
+              "NIST AML: NISTAML.037: Training Data Attacks"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "BASH_TAINT_fd6739aee9",
+          "rule_id": "BEHAVIOR_BASH_TAINT_FLOW",
+          "category": "data_exfiltration",
+          "severity": "MEDIUM",
+          "title": "Bash: network input flows to execution",
+          "description": "Variable $PREVIEW_URL (from network at line 249: `PREVIEW_URL=$(echo \"$RESPONSE\" | grep -o '\"previewUrl\":\"[^\"]*\"' | cut -d'\"' -f4)`) flows to execution sink `curl` at line 266. Executing network-sourced data is a remote code execution vector.",
+          "file_path": "resources/deploy.sh",
+          "line_number": 266,
+          "snippet": "HTTP_STATUS=$(curl -s -o /dev/null -w \"%{http_code}\" \"$PREVIEW_URL\")",
+          "remediation": "Review the data flow from source to sink. Avoid sending sensitive or untrusted data to network or execution commands.",
+          "analyzer": "behavioral",
+          "metadata": {
+            "source_var": "PREVIEW_URL",
+            "source_line": 249,
+            "sink_command": "curl",
+            "taints": [
+              "COMMAND_OUTPUT",
+              "NETWORK_INPUT"
+            ],
+            "behavior_category": "command_injection",
+            "aitech": "AITech-8.2",
+            "aitech_name": "Data Exfiltration / Exposure",
+            "aisubtech": "AISubtech-8.2.3",
+            "aisubtech_name": "Data Exfiltration via Agent Tooling",
+            "aitech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0024.000: Exfiltration via AI Inference API: Infer Training Data Membership",
+              "MITRE ATLAS: AML.T0035: AI Artifact Collection",
+              "MITRE ATLAS: AML.T0037: Data From Local System",
+              "MITRE ATLAS: AML.T0057: LLM Data Leakage",
+              "NIST AML: NISTAML.037: Training Data Attacks"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM02:2026: Sensitive Information Disclosure",
+              "OWASP: ASI02: Tool Misuse & Exploitation",
+              "OWASP: ASI09: Human-Agent Trust Exploitation",
+              "MITRE ATLAS: AML.T0086: Exfiltration via AI Agent Tool Invocation",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        }
+      ],
+      "scan_duration_seconds": 0.16705322265625,
+      "duration_ms": 167,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:37.076631+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 6,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 6,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 5,
+            "not_applicable": 1,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "remotion-best-practices",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/remotion-best-practices",
+      "is_safe": true,
+      "max_severity": "LOW",
+      "findings_count": 4,
+      "findings": [
+        {
+          "id": "EXCESSIVE_FILE_COUNT_1a390bc7de",
+          "rule_id": "EXCESSIVE_FILE_COUNT",
+          "category": "policy_violation",
+          "severity": "LOW",
+          "title": "Skill package contains many files",
+          "description": "Skill package contains 143 files. Large file counts increase attack surface and may indicate bundled dependencies or unnecessary content.",
+          "file_path": ".",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Review file inventory and remove unnecessary files.",
+          "analyzer": "static",
+          "metadata": {
+            "file_count": 143,
+            "type_breakdown": {
+              "markdown": 87,
+              "other": 36,
+              "typescript": 16,
+              "javascript": 4
+            },
+            "aitech": null,
+            "aitech_name": null,
+            "aisubtech": null,
+            "aisubtech_name": null,
+            "aitech_mappings": [],
+            "aisubtech_mappings": [],
+            "framework_mappings": [],
+            "taxonomy_status": "not_applicable",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "MANIFEST_MISSING_LICENSE_c5ae9be793",
+          "rule_id": "MANIFEST_MISSING_LICENSE",
+          "category": "policy_violation",
+          "severity": "INFO",
+          "title": "Skill does not specify a license",
+          "description": "Skill manifest does not include a 'license' field. Specifying a license helps users understand usage terms.",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'license' field to SKILL.md frontmatter (e.g., MIT, Apache-2.0)",
+          "analyzer": "static",
+          "metadata": {
+            "aitech": null,
+            "aitech_name": null,
+            "aisubtech": null,
+            "aisubtech_name": null,
+            "aitech_mappings": [],
+            "aisubtech_mappings": [],
+            "framework_mappings": [],
+            "taxonomy_status": "not_applicable",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "UNDECLARED_NETWORK_DESTINATION_6839b3e337",
+          "rule_id": "UNDECLARED_NETWORK_DESTINATION",
+          "category": "unauthorized_tool_use",
+          "severity": "LOW",
+          "title": "Script contacts a destination the documentation never mentions",
+          "description": "Script contacts or configures 'api.maptiler.com' but the skill documentation never visibly mentions it. Undocumented network destinations can indicate behaviour the manifest and description do not disclose.",
+          "file_path": "remotion-markup/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
+          "line_number": 211,
+          "snippet": null,
+          "remediation": "Document the destination in SKILL.md (or the manifest description) if it is intended, or remove the undisclosed network access. Organizations can list internal hosts in llm_analysis.trusted_reference_domains.",
+          "analyzer": "static",
+          "metadata": {
+            "semantic_facts": {
+              "evidence_kind": "pattern_match",
+              "context_kind": "code",
+              "signals": [
+                {
+                  "rule_id": "UNDECLARED_NETWORK_DESTINATION",
+                  "kind": "unreferenced_executable",
+                  "file_path": "remotion-markup/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
+                  "value_class": "other"
+                }
+              ]
+            },
+            "aitech": "AITech-9.1",
+            "aitech_name": "Model or Agentic System Manipulation",
+            "aisubtech": "AISubtech-9.1.3",
+            "aisubtech_name": "Unauthorized or Unsolicited Network Access",
+            "aitech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning",
+              "Cisco AI MDL Code: MDL-006",
+              "Cisco AI MDL Code: MDL-007",
+              "Cisco AI MDL Code: MDL-005",
+              "Cisco AI MDL Code: MDL-010",
+              "Cisco AI MDL Code: MDL-012",
+              "Cisco AI MDL Code: MDL-014",
+              "Cisco AI MDL Code: MDL-015",
+              "Cisco AI MDL Code: MDL-019"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0049: Exploit Public Facing Application",
+              "NIST AML: AML.T0072: Reverse Shell",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0049: Exploit Public Facing Application",
+              "NIST AML: AML.T0072: Reverse Shell",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        },
+        {
+          "id": "UNDECLARED_NETWORK_DESTINATION_0e7c2d0feb",
+          "rule_id": "UNDECLARED_NETWORK_DESTINATION",
+          "category": "unauthorized_tool_use",
+          "severity": "LOW",
+          "title": "Script contacts a destination the documentation never mentions",
+          "description": "Script contacts or configures 'www.maptiler.com' but the skill documentation never visibly mentions it. Undocumented network destinations can indicate behaviour the manifest and description do not disclose.",
+          "file_path": "remotion-markup/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
+          "line_number": 221,
+          "snippet": null,
+          "remediation": "Document the destination in SKILL.md (or the manifest description) if it is intended, or remove the undisclosed network access. Organizations can list internal hosts in llm_analysis.trusted_reference_domains.",
+          "analyzer": "static",
+          "metadata": {
+            "semantic_facts": {
+              "evidence_kind": "pattern_match",
+              "context_kind": "code",
+              "signals": [
+                {
+                  "rule_id": "UNDECLARED_NETWORK_DESTINATION",
+                  "kind": "unreferenced_executable",
+                  "file_path": "remotion-markup/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
+                  "value_class": "other"
+                }
+              ]
+            },
+            "aitech": "AITech-9.1",
+            "aitech_name": "Model or Agentic System Manipulation",
+            "aisubtech": "AISubtech-9.1.3",
+            "aisubtech_name": "Unauthorized or Unsolicited Network Access",
+            "aitech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+              "NIST AML: NISTAML.023: Backdoor Poisoning",
+              "Cisco AI MDL Code: MDL-006",
+              "Cisco AI MDL Code: MDL-007",
+              "Cisco AI MDL Code: MDL-005",
+              "Cisco AI MDL Code: MDL-010",
+              "Cisco AI MDL Code: MDL-012",
+              "Cisco AI MDL Code: MDL-014",
+              "Cisco AI MDL Code: MDL-015",
+              "Cisco AI MDL Code: MDL-019"
+            ],
+            "aisubtech_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0049: Exploit Public Facing Application",
+              "NIST AML: AML.T0072: Reverse Shell",
+              "NIST AML: N/A"
+            ],
+            "framework_mappings": [
+              "OWASP: LLM04:2026: Supply Chain",
+              "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+              "OWASP: ASI05: Unexpected Code Execution (RCE)",
+              "MITRE ATLAS: AML.T0049: Exploit Public Facing Application",
+              "NIST AML: AML.T0072: Reverse Shell",
+              "NIST AML: N/A"
+            ],
+            "taxonomy_status": "mapped",
+            "taxonomy_source": "rule"
+          }
+        }
+      ],
+      "scan_duration_seconds": 2.071319818496704,
+      "duration_ms": 2071,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:39.221180+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 4,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 4,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 2,
+            "not_applicable": 2,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "vercel-react-native-skills",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/vercel-react-native-skills",
+      "is_safe": true,
+      "max_severity": "SAFE",
+      "findings_count": 0,
+      "findings": [],
+      "scan_duration_seconds": 0.526059627532959,
+      "duration_ms": 526,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:39.767704+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 0,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 0,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 0,
+            "unmapped": 0
+          }
+        }
+      }
+    },
+    {
+      "skill_name": "telegram-bot-builder",
+      "skill_path": "/home/runner/work/VladFlutt/VladFlutt/.claude/skills/telegram-bot-builder",
+      "is_safe": true,
+      "max_severity": "INFO",
+      "findings_count": 1,
+      "findings": [
+        {
+          "id": "MANIFEST_MISSING_LICENSE_c5ae9be793",
+          "rule_id": "MANIFEST_MISSING_LICENSE",
+          "category": "policy_violation",
+          "severity": "INFO",
+          "title": "Skill does not specify a license",
+          "description": "Skill manifest does not include a 'license' field. Specifying a license helps users understand usage terms.",
+          "file_path": "SKILL.md",
+          "line_number": null,
+          "snippet": null,
+          "remediation": "Add 'license' field to SKILL.md frontmatter (e.g., MIT, Apache-2.0)",
+          "analyzer": "static",
+          "metadata": {
+            "aitech": null,
+            "aitech_name": null,
+            "aisubtech": null,
+            "aisubtech_name": null,
+            "aitech_mappings": [],
+            "aisubtech_mappings": [],
+            "framework_mappings": [],
+            "taxonomy_status": "not_applicable",
+            "taxonomy_source": "rule"
+          }
+        }
+      ],
+      "scan_duration_seconds": 0.04817080497741699,
+      "duration_ms": 48,
+      "analyzers_used": [
+        "static_analyzer",
+        "bytecode",
+        "pipeline",
+        "correlation",
+        "behavioral_analyzer"
+      ],
+      "timestamp": "2026-10-18T18:06:39.829589+00:00",
+      "scan_metadata": {
+        "policy_name": "default",
+        "policy_version": "1.0",
+        "policy_preset_base": "balanced",
+        "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+        "cel": {
+          "mode": "shadow",
+          "runtime": "cel-go",
+          "runtime_version": "v0.32.0;helper=2.3.0",
+          "fact_schema": "v1",
+          "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+          "evaluated": 0,
+          "retained": 1,
+          "would_suppress": 0,
+          "suppressed": 0,
+          "fallbacks": 0,
+          "projection_incomplete": 0,
+          "elapsed_ms": 0.0,
+          "projection_ms": 0.0,
+          "evaluation_ms": 0.0,
+          "errors": [],
+          "per_rule": {},
+          "suppressed_candidates": []
+        },
+        "rule_contract": {
+          "status": "passed",
+          "schema_version": 2,
+          "checked": 1,
+          "invalid_findings": 0,
+          "errors": []
+        },
+        "taxonomy": {
+          "source": "builtin",
+          "version": "2.0.0",
+          "name": "Cisco AI Security and Safety Taxonomy",
+          "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+          "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+          "findings": {
+            "mapped": 0,
+            "not_applicable": 1,
+            "unmapped": 0
+          }
+        }
+      }
+    }
+  ]
+}
