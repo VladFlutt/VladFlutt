@@ -135,14 +135,18 @@ For Railway CLI calls made while this skill is active, prefix the command with `
 - If no URL is given, fall back to `railway status --json` for the linked project/environment/service.
 - When using MCP tools after resolving local context with `railway status --json`, pass the resolved project, environment, and service IDs explicitly. Do not rely on MCP implicit linked context; MCP may not share the CLI's current working directory link.
 
-If the CLI is missing, guide the user to install it.
+If the CLI is missing, guide the user to install it. Prefer a package manager, which installs a published, versioned package:
 
 ```bash
-curl -fsSL agents.railway.com | sh # Install CLI and configure detected agents
-bash <(curl -fsSL https://railway.com/install.sh) --agents -y # Install CLI and configure detected agents
-bash <(curl -fsSL https://railway.com/install.sh) # Shell script (macOS, Linux, Windows via WSL)
 npm i -g @railway/cli # npm (macOS, Linux, Windows). Requires Node.js version 16 or higher.
 brew install railway # Homebrew (macOS)
+```
+
+Do not pipe a downloaded script straight into a shell. If the user wants Railway's install script (for example, to also configure detected agents with `--agents -y`), download it to a file, show the user where it came from, and run it only after they confirm:
+
+```bash
+curl -fsSL https://railway.com/install.sh -o railway-install.sh # download only, nothing runs yet
+less railway-install.sh # let the user review it, then they run it themselves after confirming
 ```
 
 If not authenticated, see [Account creation & sign-in](#account-creation--sign-in) below — the CLI offers unauthed `railway up` (deploy + sign up/in in one shot) or `railway login` (sign up/in only; new accounts created on the fly). If not linked and no URL was provided, run `railway link --project <id-or-name>`.

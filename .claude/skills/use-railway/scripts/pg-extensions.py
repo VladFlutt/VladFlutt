@@ -20,12 +20,59 @@ They cannot be run with piped input - the user must confirm directly.
 """
 
 import argparse
+import re
 import sys
 import json
 from typing import Tuple, List, Optional, Dict, Any
 from dataclasses import dataclass
 
 from dal import run_psql_query, info, error, confirm_with_user
+
+
+# Extension names and versions are interpolated into SQL that run_psql_query
+# wraps in a double-quoted shell argument for `railway ssh`. Accept only the
+# characters real PostgreSQL extension names/versions use (e.g. pg_stat_statements,
+# uuid-ossp, 3.4.0) so a crafted argument cannot break out of the SQL string
+# or the shell quoting.
+_EXTENSION_NAME_RE = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]{0,62}$")
+_EXTENSION_VERSION_RE = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.+-]{0,63}$")
+
+
+def _validated(value: str, pattern: "re.Pattern[str]", what: str) -> str:
+    if not isinstance(value, str) or not pattern.fullmatch(value):
+        raise ValueError(f"invalid {what}: {value!r}")
+    return value
+
+
+def extension_name_arg(value: str) -> str:
+    """argparse type: reject extension names with unsafe characters."""
+    try:
+        return _validated(value, _EXTENSION_NAME_RE, "extension name")
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from None
+
+
+def extension_version_arg(value: str) -> str:
+    """argparse type: reject extension versions with unsafe characters."""
+    try:
+        return _validated(value, _EXTENSION_VERSION_RE, "extension version")
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from None
+
+
+def sql_name_literal(extension: str) -> str:
+    """Validated extension name as a single-quoted SQL string literal."""
+    return "'" + _validated(extension, _EXTENSION_NAME_RE, "extension name") + "'"
+
+
+def sql_name_identifier(extension: str) -> str:
+    """Validated extension name as a double-quoted SQL identifier."""
+    return '"' + _validated(extension, _EXTENSION_NAME_RE, "extension name") + '"'
+
+
+def sql_version_literal(version: str) -> str:
+    """Validated extension version as a single-quoted SQL string literal."""
+    return "'" + _validated(version, _EXTENSION_VERSION_RE, "extension version") + "'"
 
 
 @dataclass
@@ -118,12 +165,12 @@ def list_extensions(service: str, json_output: bool = False) -> List[Extension]:
 
 def get_extension_dependencies(service: str, extension: str) -> List[str]:
     """Get dependencies for an extension."""
-    query = f"""
-        SELECT DISTINCT unnest(pev.requires) as dependency
-        FROM pg_available_extension_versions pev
-        WHERE pev.name = '{extension}' AND pev.requires IS NOT NULL
-        ORDER BY dependency
-    """
+    query = (
+        "SELECT DISTINCT unnest(pev.requires) as dependency "
+        "FROM pg_available_extension_versions pev "
+        "WHERE pev.name = " + sql_name_literal(extension) + " AND pev.requires IS NOT NULL "
+        "ORDER BY dependency"
+    )
     code, output = run_psql_query(service, query)
     if code != 0:
         return []
@@ -137,16 +184,16 @@ def get_extension_dependencies(service: str, extension: str) -> List[str]:
 
 def get_extension_dependents(service: str, extension: str) -> List[str]:
     """Get extensions that depend on this extension."""
-    query = f"""
-        SELECT e.extname AS dependent_extension
-        FROM pg_depend d
-        JOIN pg_extension e ON d.objid = e.oid
-        JOIN pg_extension ref_e ON d.refobjid = ref_e.oid
-        WHERE d.classid = 'pg_extension'::regclass
-            AND d.refclassid = 'pg_extension'::regclass
-            AND ref_e.extname = '{extension}'
-        ORDER BY dependent_extension
-    """
+    query = (
+        "SELECT e.extname AS dependent_extension "
+        "FROM pg_depend d "
+        "JOIN pg_extension e ON d.objid = e.oid "
+        "JOIN pg_extension ref_e ON d.refobjid = ref_e.oid "
+        "WHERE d.classid = 'pg_extension'::regclass "
+        "AND d.refclassid = 'pg_extension'::regclass "
+        "AND ref_e.extname = " + sql_name_literal(extension) + " "
+        "ORDER BY dependent_extension"
+    )
     code, output = run_psql_query(service, query)
     if code != 0:
         return []
@@ -160,7 +207,7 @@ def get_extension_dependents(service: str, extension: str) -> List[str]:
 
 def is_extension_installed(service: str, extension: str) -> Tuple[bool, Optional[str]]:
     """Check if extension is installed, return (installed, version)."""
-    query = f"SELECT extversion FROM pg_extension WHERE extname = '{extension}'"
+    query = "SELECT extversion FROM pg_extension WHERE extname = " + sql_name_literal(extension)
     code, output = run_psql_query(service, query)
     if code == 0 and output.strip():
         return True, output.strip()
@@ -169,7 +216,7 @@ def is_extension_installed(service: str, extension: str) -> Tuple[bool, Optional
 
 def is_extension_available(service: str, extension: str) -> bool:
     """Check if extension is available in the image."""
-    query = f"SELECT 1 FROM pg_available_extensions WHERE name = '{extension}'"
+    query = "SELECT 1 FROM pg_available_extensions WHERE name = " + sql_name_literal(extension)
     code, output = run_psql_query(service, query)
     return code == 0 and output.strip() == "1"
 
@@ -198,9 +245,9 @@ def install_extension(service: str, extension: str, version: Optional[str] = Non
         return False
 
     # Build install query
-    query = f'CREATE EXTENSION IF NOT EXISTS "{extension}"'
+    query = "CREATE EXTENSION IF NOT EXISTS " + sql_name_identifier(extension)
     if version:
-        query += f" VERSION '{version}'"
+        query += " VERSION " + sql_version_literal(version)
     query += " CASCADE"  # Auto-install dependencies
 
     info(f"Installing extension '{extension}'...")
@@ -240,7 +287,7 @@ def uninstall_extension(service: str, extension: str) -> bool:
         return False
 
     # Uninstall
-    query = f'DROP EXTENSION IF EXISTS "{extension}"'
+    query = "DROP EXTENSION IF EXISTS " + sql_name_identifier(extension)
     info(f"Uninstalling extension '{extension}'...")
     code, output = run_psql_query(service, query)
     if code != 0:
@@ -264,7 +311,10 @@ def extension_info(service: str, extension: str, json_output: bool = False):
         error(f"Extension '{extension}' is not available in this database image")
 
     # Get info
-    query = f"SELECT name, default_version, comment FROM pg_available_extensions WHERE name = '{extension}'"
+    query = (
+        "SELECT name, default_version, comment FROM pg_available_extensions WHERE name = "
+        + sql_name_literal(extension)
+    )
     code, output = run_psql_query(service, query)
     if code != 0:
         error(f"Failed to get extension info: {output}")
@@ -335,16 +385,16 @@ They cannot be automated or run with piped input.
 
     # install command (requires interactive confirmation)
     install_parser = subparsers.add_parser("install", help="Install an extension (requires confirmation)")
-    install_parser.add_argument("extension", help="Extension name")
-    install_parser.add_argument("--version", "-v", help="Specific version to install")
+    install_parser.add_argument("extension", type=extension_name_arg, help="Extension name")
+    install_parser.add_argument("--version", "-v", type=extension_version_arg, help="Specific version to install")
 
     # uninstall command (requires interactive confirmation)
     uninstall_parser = subparsers.add_parser("uninstall", help="Uninstall an extension (requires confirmation)")
-    uninstall_parser.add_argument("extension", help="Extension name")
+    uninstall_parser.add_argument("extension", type=extension_name_arg, help="Extension name")
 
     # info command
     info_parser = subparsers.add_parser("info", help="Show extension info")
-    info_parser.add_argument("extension", help="Extension name")
+    info_parser.add_argument("extension", type=extension_name_arg, help="Extension name")
 
     args = parser.parse_args()
 

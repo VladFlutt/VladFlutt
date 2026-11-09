@@ -24,10 +24,11 @@
 ## Отличия от источника
 
 - `deploy-to-vercel`: удалён `Archive.zip`. Это забытая в исходном репозитории устаревшая копия skill с мусором macOS (`__MACOSX`), на неё ничего не ссылается.
+- `use-railway`: имена и версии расширений в `scripts/pg-extensions.py` проверяются перед подстановкой в SQL, PID в подсказках `scripts/analyze-postgres.py` приводится к числу, установка CLI через `curl | sh` заменена на npm/brew или скачивание скрипта с просмотром, две фразы про RAM в `references/` переписаны без «do not tell the user». Подробности в [SECURITY-NOTES.md](../../SECURITY-NOTES.md).
 
 ## Проверка безопасности
 
-Workflow `.github/workflows/scan-skills.yml` прогоняет [cisco-ai-defense/skill-scanner](https://github.com/cisco-ai-defense/skill-scanner) при каждом изменении skills и кладёт отчёт в ветку `skill-scan-report`.
+Workflow `.github/workflows/scan-skills.yml` прогоняет [cisco-ai-defense/skill-scanner](https://github.com/cisco-ai-defense/skill-scanner) при каждом изменении skills и кладёт отчёт в ветку `skill-scan-report` (только для `main`). Политика сканера и обоснованные исключения: `.github/skill-scanner-policy.yaml` и [SECURITY-NOTES.md](../../SECURITY-NOTES.md).
 
 ## Обновление
 
