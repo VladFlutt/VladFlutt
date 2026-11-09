@@ -2094,20 +2094,25 @@ def generate_recommendations(result: AnalysisResult) -> List[Dict[str, str]]:
             try:
                 wait_sec = int(q.get("wait_sec", 0))
                 if wait_sec > 30:
+                    # PIDs come from pg_stat_activity output; coerce to int so the
+                    # suggested SQL below can only ever contain a number.
+                    blocking_pid = int(q.get("blocking_pid"))
                     recommendations.append({
                         "priority": "immediate",
                         "issue": f"Query waiting {wait_sec}s for lock (PID {q.get('pid')} blocked by {q.get('blocking_pid')})",
                         "action": "Investigate the blocking query and terminate if appropriate",
-                        "explanation": f"PID {q.get('pid')} has been waiting {wait_sec}s for a lock held by PID {q.get('blocking_pid')}. "
-                                       f"WHY: The blocking query/transaction is holding a lock (row, table, or advisory) that this query needs. "
-                                       f"COMMON CAUSES: Long-running transaction, idle-in-transaction, DDL operations (ALTER TABLE). "
-                                       f"TO INVESTIGATE: SELECT query FROM pg_stat_activity WHERE pid = {q.get('blocking_pid')}; "
-                                       f"TO UNBLOCK: Cancel or terminate the blocking PID if it's stuck. "
-                                       f"SIDE EFFECT: Terminating the blocker will rollback its transaction, but unblock waiting queries.",
+                        "explanation": (
+                            f"PID {q.get('pid')} has been waiting {wait_sec}s for a lock held by PID {blocking_pid}. "
+                            "WHY: The blocking query/transaction is holding a lock (row, table, or advisory) that this query needs. "
+                            "COMMON CAUSES: Long-running transaction, idle-in-transaction, DDL operations (ALTER TABLE). "
+                            + ("TO INVESTIGATE: SELECT query FROM pg_stat_activity WHERE pid = %d; " % blocking_pid)
+                            + "TO UNBLOCK: Cancel or terminate the blocking PID if it's stuck. "
+                            "SIDE EFFECT: Terminating the blocker will rollback its transaction, but unblock waiting queries."
+                        ),
                         "commands": [
-                            f"-- See what {q.get('blocking_pid')} is doing:",
-                            f"SELECT pid, state, query FROM pg_stat_activity WHERE pid = {q.get('blocking_pid')};",
-                            f"-- To terminate (if stuck): SELECT pg_terminate_backend({q.get('blocking_pid')});",
+                            f"-- See what {blocking_pid} is doing:",
+                            "SELECT pid, state, query FROM pg_stat_activity WHERE pid = %d;" % blocking_pid,
+                            "-- To terminate (if stuck): SELECT pg_terminate_backend(%d);" % blocking_pid,
                         ],
                     })
             except (ValueError, TypeError):

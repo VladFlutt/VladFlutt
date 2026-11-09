@@ -2,9 +2,9 @@ name: Scan Skills
 
 on:
   push:
-    paths: [".claude/skills/**", ".github/workflows/scan-skills.yml"]
+    paths: [".claude/skills/**", ".github/workflows/scan-skills.yml", ".github/skill-scanner-policy.yaml"]
   pull_request:
-    paths: [".claude/skills/**"]
+    paths: [".claude/skills/**", ".github/workflows/scan-skills.yml", ".github/skill-scanner-policy.yaml"]
   workflow_dispatch:
 
 permissions:
@@ -24,10 +24,10 @@ jobs:
         run: |
           set +e
           skill-scanner scan-all .claude/skills --recursive --use-behavioral --check-overlap \
-            --policy balanced --format markdown --output report.md
+            --policy .github/skill-scanner-policy.yaml --format markdown --output report.md
           code=$?
           skill-scanner scan-all .claude/skills --recursive --use-behavioral \
-            --policy balanced --format json --output report.json
+            --policy .github/skill-scanner-policy.yaml --format json --output report.json
           cat report.md
           cat report.md >> "$GITHUB_STEP_SUMMARY"
           echo "scanner exit code: $code"
@@ -38,7 +38,7 @@ jobs:
           name: skill-scan-report
           path: report.*
       - name: Publish report to skill-scan-report branch
-        if: always() && github.event_name != 'pull_request'
+        if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           mkdir /tmp/out && cp report.* /tmp/out/
           git config user.name "github-actions[bot]"

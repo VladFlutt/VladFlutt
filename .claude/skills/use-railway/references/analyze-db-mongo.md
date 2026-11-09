@@ -77,7 +77,7 @@ Do NOT show cpu_limit/memory_limit columns or utilization %. Railway auto-scales
 See [analyze-db.md](analyze-db.md) for full autoscale rules. For MongoDB specifically:
 - WiredTiger uses ~50% of available RAM for cache by default. As Railway auto-scales the container, the cache ceiling grows automatically.
 - Do NOT recommend limiting WiredTiger cache to a fraction of the Railway memory limit — the limit is the autoscale ceiling, not fixed allocation.
-- If cache usage is consistently >80%, this indicates working set pressure — note it but do not tell the user to increase RAM manually.
+- If cache usage is consistently >80%, this indicates working set pressure — note it, but don't recommend a manual RAM increase: Railway autoscaling raises the memory ceiling on its own.
 
 ## Validated against
 

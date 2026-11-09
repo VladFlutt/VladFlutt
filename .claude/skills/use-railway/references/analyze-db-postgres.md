@@ -223,7 +223,7 @@ See [analyze-db.md](analyze-db.md) for full autoscale rules. For PostgreSQL spec
 
 - Tune parameters relative to the **current** RAM from `metrics_history.memory.current`, not `memory_limit`.
 - If shared_buffers is undersized relative to current RAM, recommend increasing it to 25% of current RAM.
-- If the working set far exceeds what 25% of current RAM can hold, note this as a limitation of the current memory footprint — but do NOT tell the user to increase RAM. The platform handles that automatically.
+- If the working set far exceeds what 25% of current RAM can hold, note this as a limitation of the current memory footprint — but don't recommend a manual RAM increase; the platform scales memory automatically.
 
 ## Thresholds for Reasoning
 

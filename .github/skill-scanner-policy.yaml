@@ -1,0 +1,33 @@
+# Skill Scanner policy for this repository.
+# Same as the built-in "balanced" preset, plus narrowly scoped re-ratings for
+# findings that were reviewed by hand. Nothing is disabled: each entry targets
+# one rule in one skill and file, keeps the finding in the report at LOW with
+# the reason attached, and expires so it gets reviewed again.
+# Details for each entry: SECURITY-NOTES.md at the repository root.
+
+policy_name: vladflutt-skills
+policy_version: '1.0'
+preset_base: balanced
+
+suppressions:
+  - rule_id: ALLOWED_TOOLS_BASH_VIOLATION
+    skills: [use-railway]
+    paths: [SKILL.md]
+    severity: LOW
+    expires: '2027-05-09'
+    reason: >-
+      use-railway does declare Bash, scoped as Bash(railway:*), Bash(curl:*),
+      Bash(python3:*) and so on. The scanner only accepts a bare "Bash" entry,
+      which would grant unrestricted shell access. Keeping the narrower scoped
+      allowlist is the safer choice. See SECURITY-NOTES.md.
+
+  - rule_id: SQL_INJECTION_STRING_FORMAT
+    skills: [use-railway]
+    paths: [scripts/pg-extensions.py]
+    severity: LOW
+    expires: '2027-05-09'
+    reason: >-
+      Extension names and versions are validated against a strict allowlist
+      regex (argparse type plus sql_name_literal / sql_name_identifier /
+      sql_version_literal) before being concatenated into SQL. The pattern
+      match cannot see the validator. See SECURITY-NOTES.md.
