@@ -1,51 +1,111 @@
 name: Scan Skills
 
+# Runs Cisco skill-scanner (static + behavioral analyzers, no LLM / no API key)
+# on every push and pull request that touches skills or this check itself.
+# Fails only on CRITICAL findings that are not accepted in
+# .github/skill-scan/baseline.json. Reviewed re-ratings of individual findings
+# live in .github/skill-scanner-policy.yaml (see SECURITY-NOTES.md).
+
 on:
   push:
-    paths: [".claude/skills/**", ".github/workflows/scan-skills.yml", ".github/skill-scanner-policy.yaml"]
+    paths:
+      - ".claude/skills/**"
+      - ".github/skill-scan/**"
+      - ".github/skill-scanner-policy.yaml"
+      - ".github/workflows/scan-skills.yml"
   pull_request:
-    paths: [".claude/skills/**", ".github/workflows/scan-skills.yml", ".github/skill-scanner-policy.yaml"]
+    paths:
+      - ".claude/skills/**"
+      - ".github/skill-scan/**"
+      - ".github/skill-scanner-policy.yaml"
+      - ".github/workflows/scan-skills.yml"
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: scan-skills-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SKILLS_DIR: .claude/skills
+  SCANNER_VERSION: "2.3.0"
+  SCANNER_POLICY: .github/skill-scanner-policy.yaml
+  FAIL_ON: CRITICAL
 
 jobs:
   scan:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: .github/workflows/scan-skills.yml
+
       - name: Install skill-scanner
-        run: pip install "cisco-ai-skill-scanner==2.3.0"
-      - name: Scan
+        run: pip install "cisco-ai-skill-scanner==${SCANNER_VERSION}"
+
+      - name: Scan skills
         run: |
           set +e
-          skill-scanner scan-all .claude/skills --recursive --use-behavioral --check-overlap \
-            --policy .github/skill-scanner-policy.yaml --format markdown --output report.md
-          code=$?
-          skill-scanner scan-all .claude/skills --recursive --use-behavioral \
-            --policy .github/skill-scanner-policy.yaml --format json --output report.json
-          cat report.md
-          cat report.md >> "$GITHUB_STEP_SUMMARY"
-          echo "scanner exit code: $code"
-          exit $code
+          skill-scanner scan-all "$SKILLS_DIR" --recursive --use-behavioral --check-overlap \
+            --policy "$SCANNER_POLICY" --format json --output report.json
+          json_code=$?
+          skill-scanner scan-all "$SKILLS_DIR" --recursive --use-behavioral --check-overlap \
+            --policy "$SCANNER_POLICY" --format markdown --output report.md
+          md_code=$?
+          echo "scanner exit codes: json=$json_code markdown=$md_code"
+          if [ ! -s report.json ]; then
+            echo "::error title=skill-scanner::Scanner did not produce report.json (exit code $json_code)"
+            exit 1
+          fi
+
+      - name: Check for new critical findings
+        run: |
+          python3 .github/skill-scan/gate.py report.json \
+            --fail-on "$FAIL_ON" \
+            --summary "$GITHUB_STEP_SUMMARY" \
+            --markdown summary.md
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: skill-scan-report
-          path: report.*
+          path: |
+            report.json
+            report.md
+            summary.md
+          if-no-files-found: ignore
+
+  publish:
+    # Keeps the latest main-branch report on the skill-scan-report branch.
+    needs: scan
+    if: >-
+      always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' &&
+      (needs.scan.result == 'success' || needs.scan.result == 'failure')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: skill-scan-report
+          path: /tmp/out
       - name: Publish report to skill-scan-report branch
-        if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
-          mkdir /tmp/out && cp report.* /tmp/out/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout --orphan skill-scan-report
           git rm -rfq .
           cp /tmp/out/* .
-          git add report.*
+          git add report.* summary.md 2>/dev/null || git add -A
           git commit -qm "Skill scan report for ${GITHUB_SHA}"
           git push -f origin skill-scan-report
